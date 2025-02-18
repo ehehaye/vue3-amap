@@ -67,7 +67,7 @@ TODO
 搭建
 
 ```sh
-git clone https://github.com/tanghongxin/vue3-amap.git
+git clone https://github.com/ehehaye/vue3-amap.git
 cd vue3-amap
 pnpm i
 ```
