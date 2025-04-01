@@ -74,7 +74,7 @@
     <a-flex :flex="1">
       <a-map-map>
         <a-map-fit-view />
-        <!-- JS SKD 调用，日限额较低 -->
+        <!-- JS SDK 调用，日限额较低 -->
         <!-- <a-map-search /> -->
 
         <!-- Web API 调用，日限额较高 -->
