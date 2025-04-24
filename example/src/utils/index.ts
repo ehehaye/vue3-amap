@@ -1,5 +1,4 @@
-export function toArray(val: string | string[]) {
-  if (Array.isArray(val)) return val;
-  if (['', null, undefined].includes(val)) return [];
-  return [val];
+export function toArray(val: string | string[] | null | undefined): string[] {
+  if (val == null || val === '') return [];
+  return Array.isArray(val) ? val : [val];
 }
