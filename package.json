@@ -45,9 +45,9 @@
     },
     "./global": {
       "types": "./types/components.d.ts"
-    }
+    },
+    "./dist/index.css": "./dist/index.css"
   },
-  "style": "./dist/index.css",
   "peerDependencies": {
     "vue": "^3.0.0"
   },
