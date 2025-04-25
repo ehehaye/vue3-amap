@@ -3,7 +3,7 @@ import { message } from 'ant-design-vue';
 import { globalLoading } from '@/utils/share';
 
 const request = axios.create({
-  baseURL: '/geofence',
+  baseURL: `${import.meta.env.VITE_AMAP_BACKEND}/geofence`,
 });
 
 request.interceptors.request.use((config) => {

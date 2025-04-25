@@ -22,7 +22,7 @@ class AssistantService {
    */
   inputtips(data = {}) {
     return fetch(
-      `/inputtips?${new URLSearchParams({
+      `${import.meta.env.VITE_AMAP_BACKEND}/inputtips?${new URLSearchParams({
         ...data,
       }).toString()}`,
       { method: 'GET' },

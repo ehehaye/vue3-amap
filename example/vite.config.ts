@@ -35,20 +35,6 @@ export default defineConfig(({ mode }) => {
       },
       server: {
         https: true,
-        proxy: {
-          '/_AMapService': {
-            target: 'https://amap.ado.icu',
-            changeOrigin: true,
-          },
-          '/geofence': {
-            target: 'https://amap.ado.icu',
-            changeOrigin: true,
-          },
-          '/inputtips': {
-            target: 'https://amap.ado.icu',
-            changeOrigin: true,
-          },
-        },
       },
       optimizeDeps: {
         include: ['ant-design-vue/es'],

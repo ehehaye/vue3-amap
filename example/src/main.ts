@@ -11,7 +11,7 @@ if (import.meta.env.MODE === 'development') {
 
 // @ts-expect-error ...
 window._AMapSecurityConfig = {
-  serviceHost: `${window.location.protocol}//${window.location.host}/_AMapService`,
+  serviceHost: `${import.meta.env.VITE_AMAP_BACKEND}/_AMapService`,
 };
 
 const app = createApp(App);
