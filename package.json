@@ -3,7 +3,7 @@
   "version": "0.1.16",
   "license": "MIT",
   "author": "hongxin.tang@hotmail.com",
-  "homepage": "https://amap.ado.icu",
+  "homepage": "https://amap.3mo.me",
   "description": "基于 vue3 封装的高德地图组件集合，配合猎鹰轨迹服务搭建了简易的电子围栏管理系统与企业签到 demo",
   "keywords": [
     "vue",
