@@ -91,6 +91,6 @@
     "vue": "^3.4.21",
     "vue-component-type-helpers": "^2.0.12",
     "vue-eslint-parser": "^9.4.3",
-    "vue-router": "^4.3.0"
+    "vue-router": "^5.0.2"
   }
 }
