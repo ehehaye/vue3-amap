@@ -28,3 +28,6 @@ es
 
 # dotenv
 *.local
+
+# runtime files
+example/components.d.ts
