@@ -16,7 +16,11 @@
 
       <a-popconfirm title="是否确定删除选中围栏？" @confirm="handleDelete">
         <a-button danger :disabled="!state.selectedRowKeys.length">
-          删除
+          删除{{
+            state.selectedRowKeys.length
+              ? `(x${state.selectedRowKeys.length})`
+              : ''
+          }}
         </a-button>
       </a-popconfirm>
 
@@ -28,7 +32,7 @@
       </a-button>
 
       <a-button :disabled="!state.dataSource.length" @click="handlePreview">
-        预览
+        预览 {{ countOfPreview ? `(x${countOfPreview})` : '' }}
       </a-button>
 
       <a-button @click="handleSearch"> 刷新 </a-button>
@@ -53,7 +57,7 @@
 
 <script setup lang="ts">
 import { geoFenceService } from '@/services';
-import { reactive, ref, onActivated, onBeforeMount } from 'vue';
+import { reactive, ref, onActivated, onBeforeMount, computed } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { DownOutlined } from '@ant-design/icons-vue';
 import dayjs from 'dayjs';
@@ -101,6 +105,10 @@ const state = reactive({
   selectedRows: [] as Fence[],
   selectedRowKeys: [] as Fence['gfid'][],
 });
+
+const countOfPreview = computed(
+  () => state.selectedRowKeys.length || state.dataSource.length,
+);
 
 const handleSearch = async () => {
   const { results } = await geoFenceService.list();
