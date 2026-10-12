@@ -6,18 +6,17 @@
 
 - 类型提示
 - 原生组件封装
-  - [AMapControlBar](#基础地图-amapmap)
-  - [AMapGeolocation](#实时定位-amapgeolocation)
-  - [AMapMap](#基础地图-amapmap)
-  - [AMapMapType](#基础地图-amapmap)
-  - [AMapMarker](#基础地图-amapmap)
-  - [AMapScale](#基础地图-amapmap)
-  - [AMapSearch](#基础地图-amapmap)
-  - [AMapToolbar](#基础地图-amapmap)
+  - [AMapControlBar](#amapcontrolbar)
+  - [AMapGeolocation](#amapgeolocation)
+  - [AMapMap](#amapmap)
+  - [AMapMapType](#amapmaptype)
+  - [AMapMarker](#amapmarker)
+  - [AMapScale](#amapscale)
+  - [AMapSearch](#amapsearch)
+  - [AMapToolbar](#amaptoolbar)
 - 拓展组件
-  - [AMapFitView](#基础地图-amapmap)
-  - [AMapPositionWatcher](#实时定位-amapgeolocation)
-  - [AMapVector](#绘制矢量图形围栏-amapvector)
+  - [AMapFitView](#amapfitview)
+  - [AMapVector](#amapvector)
 
 ## Usage
 
@@ -58,19 +57,17 @@ app.use(Vue3AMap, {
 
 ### 使用
 
-所有组件均已全局注册，可直接在模板中使用（推荐 kebab-case）。`AMapMap` 为地图容器，子组件须置于其默认插槽内；**插槽内容在地图 `complete` 且 `AMap`、`map` 实例就绪后才会渲染**，因此子组件可安全地通过依赖注入获取地图实例。
+所有组件均已全局注册，可直接在模板中使用（推荐 kebab-case）。除 `AMapMap` 外，其余组件都必须放在 `AMapMap` 的默认插槽内；**插槽内容在地图 `complete` 且 `AMap`、`map` 实例就绪后才会渲染**，因此子组件可安全地通过依赖注入获取地图实例。
 
-> 注意：`AMapMap` 内部容器宽高为 `max(100%, 100px)`，父元素需有明确尺寸，否则地图不可见。
-
-#### 基础地图 [`AMapMap`](./src/components/Map/index.vue)
+综合示例：
 
 ```vue
 <template>
   <div class="map-container">
     <a-map-map map-style="normal" @complete="onComplete" @destroy="onDestroy">
       <a-map-toolbar />
-      <a-map-scale />
       <a-map-control-bar />
+      <a-map-scale />
       <a-map-map-type />
       <a-map-fit-view />
       <a-map-search />
@@ -97,11 +94,64 @@ const onDestroy = () => console.log('地图已销毁');
 </style>
 ```
 
-[`AMapMap`](./src/components/Map/index.vue) 的 `mapStyle` 支持 `normal`、`macaron`、`graffiti`、`whitesmoke`、`dark`、`fresh`、`darkblue`、`blue`、`light`、`grey`，运行时实时切换。
+#### AMapMap
 
-#### 绘制矢量图形（围栏） [`AMapVector`](./src/components/Vector/index.vue)
+地图容器，负责加载 `AMap` 并创建 `map` 实例，其余组件通过依赖注入获取该实例。
 
-[`AMapVector`](./src/components/Vector/index.vue) 支持 `circle`（圆）与 `polygon`（多边形），通过 `ref` 暴露 `start` / `stop` / `clear` / `generateConfig` 等方法驱动绘制与序列化。
+| 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `mapStyle` | `string` | `'normal'` | 地图风格，支持 `normal`、`macaron`、`graffiti`、`whitesmoke`、`dark`、`fresh`、`darkblue`、`blue`、`light`、`grey`，修改后实时切换 |
+
+| 事件 | 参数 | 说明 |
+| --- | --- | --- |
+| `complete` | - | 地图加载完成 |
+| `destroy` | - | 地图销毁 |
+
+| 插槽 | 说明 |
+| --- | --- |
+| `default` | 子组件内容，仅在 `complete` 且实例就绪后渲染 |
+
+> 容器宽高为 `max(100%, 100px)`，父元素需有明确尺寸，否则地图不可见。
+
+```vue
+<a-map-map map-style="normal" @complete="onComplete" @destroy="onDestroy">
+  <!-- 子组件 -->
+</a-map-map>
+```
+
+#### AMapMarker
+
+在地图上添加点标记。
+
+| 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `position` | `[number, number]` | `null` | 标记经纬度 `[lng, lat]`，缺省时取地图中心点 |
+| `title` | `string` | `''` | 标记标题 |
+| `zIndex` | `number` | `100` | 层级 |
+| `autoFitView` | `boolean` | `false` | 位置变化时是否自动调整视野 |
+
+```vue
+<a-map-marker :position="[116.397428, 39.90923]" title="天安门" auto-fit-view />
+```
+
+#### AMapVector
+
+绘制并序列化矢量图形（围栏），支持 `circle`（圆）与 `polygon`（多边形）。
+
+| 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `config` | `{ type: 'circle' \| 'polygon'; shape?: unknown }` | `{}` | `type` 指定图形类型，`shape` 用于回显已有图形 |
+
+通过 `ref` 暴露的成员：
+
+| 成员 | 类型 | 说明 |
+| --- | --- | --- |
+| `start()` | `() => void` | 开始绘制；已有图形时进入微调 |
+| `stop(ifClear?)` | `(ifClear?: boolean) => void` | 结束绘制或微调，可选清除 |
+| `clear()` | `() => void` | 清空并重置绘制 |
+| `generateConfig()` | `() => object` | 序列化当前图形为 `config` |
+| `vectorRef` | `AMap.Polygon \| AMap.Circle \| null` | 当前图形实例 |
+| `reaOnlyRef` | `ComputedRef<boolean>` | 是否处于只读（非绘制 / 微调）状态 |
 
 ```vue
 <template>
@@ -146,7 +196,7 @@ const save = () => {
 </script>
 ```
 
-`config.shape` 用于回显已有围栏，结构因 `type` 而异：
+`config.shape` 的结构因 `type` 而异：
 
 ```js
 // 圆形
@@ -155,30 +205,107 @@ const save = () => {
 { type: 'polygon', points: '104.062227,30.548188;104.063946,30.548182;...' }
 ```
 
-#### 实时定位 [`AMapGeolocation`](./src/components/Geolocation/index.vue)
+#### AMapSearch
 
-[`AMapGeolocation`](./src/components/Geolocation/index.vue) 开启 `watch-position` 后周期性触发 `update:position`（`[lng, lat]`），可配合 `AMapMarker` 展示当前位置：
+地名输入提示与 POI 搜索，内部使用 `AMap.AutoComplete` 与 `AMap.PlaceSearch`。
+
+| 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `position` | `object` | `{ top: '40px', left: '90px' }` | 输入框位置 |
 
 ```vue
-<template>
-  <a-map-map>
-    <a-map-marker v-if="position?.length" :position="position" auto-fit-view />
-    <a-map-geolocation
-      watch-position
-      :show-button="false"
-      :show-circle="false"
-      :show-marker="false"
-      :pan-to-location="false"
-      @update:position="position = $event"
-    />
-  </a-map-map>
-</template>
+<a-map-search />
+```
 
-<script setup lang="ts">
-import { ref } from 'vue';
+#### AMapGeolocation
 
-const position = ref<AMap.Vector2>(null);
-</script>
+浏览器定位控件，可周期性上报当前位置。
+
+| 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `watchPosition` | `boolean` | `false` | 开启后每 3 秒触发一次 `update:position` |
+| `showButton` | `boolean` | `true` | 是否显示定位按钮 |
+| `showCircle` | `boolean` | `true` | 是否显示定位精度圈 |
+| `showMarker` | `boolean` | `true` | 是否显示定位点 |
+| `panToLocation` | `boolean` | `true` | 定位成功后是否移动到定位点 |
+| `position` | `object` | `{ bottom: '90px', right: '40px' }` | 控件位置 |
+
+| 事件 | 参数 | 说明 |
+| --- | --- | --- |
+| `update:position` | `[lng, lat]` | 定位结果，`watchPosition` 开启时周期性触发 |
+
+```vue
+<a-map-map>
+  <a-map-marker v-if="position?.length" :position="position" auto-fit-view />
+  <a-map-geolocation
+    watch-position
+    :show-button="false"
+    :show-circle="false"
+    :show-marker="false"
+    :pan-to-location="false"
+    @update:position="position = $event"
+  />
+</a-map-map>
+```
+
+#### AMapToolbar
+
+地图工具条（缩放、平移等）。
+
+| 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `position` | `object` | `{ top: '40px', left: '40px' }` | 控件位置 |
+
+```vue
+<a-map-toolbar />
+```
+
+#### AMapControlBar
+
+地图旋转、倾斜控件。
+
+| 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `position` | `object` | `{ bottom: '80px', left: '35px' }` | 控件位置 |
+
+```vue
+<a-map-control-bar />
+```
+
+#### AMapScale
+
+比例尺控件。
+
+| 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `position` | `object` | `{ bottom: '50px', left: '40px' }` | 控件位置 |
+
+```vue
+<a-map-scale />
+```
+
+#### AMapMapType
+
+图层切换控件（标准 / 卫星）。
+
+| 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `position` | `object` | `{ bottom: '200px', right: '40px' }` | 控件位置 |
+
+```vue
+<a-map-map-type />
+```
+
+#### AMapFitView
+
+一键将地图视野调整到全部覆盖物。
+
+| 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `position` | `object` | `{ bottom: '90px', right: '80px' }` | 按钮位置 |
+
+```vue
+<a-map-fit-view />
 ```
 
 ## Dev
