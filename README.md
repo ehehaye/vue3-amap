@@ -2,6 +2,17 @@
 
 基于 vue3 封装的高德地图组件集合，并搭配猎鹰轨迹服务实现简易的电子围栏与企业签到 demo
 
+![围栏预览](docs/images/preview.png)
+
+<p align="center">
+  <img src="docs/images/manage.png" alt="围栏管理" width="49%" />
+  <img src="docs/images/fence-edit.png" alt="围栏绘制" width="49%" />
+</p>
+
+<p align="center">
+  <img src="docs/images/sign-in.png" alt="移动端扫码签到" width="300" />
+</p>
+
 ## Features
 
 - 类型提示
